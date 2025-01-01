@@ -289,8 +289,19 @@ const itensSlice = createSlice({
         return item;
       });
     },
+    registerItem: (state, {payload}) => {
+      state.push({...payload, id: uuid()});
+    },
+    changeItem : (state, {payload}) =>{
+      const index = state.findIndex(item => item.id === payload.id);
+      if(index !== -1) Object.assign(state[index], payload.item);
+    },
+    deleteItem: (state, {payload}) => {
+      const index = state.findIndex(item => item.id === payload.id);
+      if(index !== -1) state.splice(index, 1);
+    }
   },
 });
 
-export const { mudarFavorito } = itensSlice.actions;
+export const { mudarFavorito, registerItem, changeItem , deleteItem} = itensSlice.actions;
 export default itensSlice.reducer;
