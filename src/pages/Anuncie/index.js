@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { registerItem } from "store/reducers/itens";
 import { useParams } from "react-router-dom";
 import Input from "components/Input";
+import { useEffect } from "react";
+import { loadCategories, loadOneCategory } from "store/reducers/categorias";
 
 export default function Anuncie() {
     const {nomeCategoria = ""} = useParams();
@@ -19,6 +21,15 @@ export default function Anuncie() {
     function submitRegister (data){
         dispatch(registerItem(data))
     }
+
+    useEffect(() => {
+        dispatch(   
+            nomeCategoria ?
+             loadOneCategory(nomeCategoria) : 
+             loadCategories()
+        );
+    }, [dispatch, nomeCategoria]);
+
     return (
         <div className={styles.container}>
             <Header

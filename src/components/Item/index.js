@@ -35,7 +35,7 @@ function Item(props) {
 
   const dispatch = useDispatch();
   const estaNoCarrinho = useSelector((state) =>
-    state.carrinho.some((itemNoCarrinho) => itemNoCarrinho.id === id)
+    state.carrinho.data.some((itemNoCarrinho) => itemNoCarrinho.id === id)
   );
 
   function resolverFavorito() {
