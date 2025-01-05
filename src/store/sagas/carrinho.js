@@ -1,9 +1,12 @@
+import { createStandaloneToast } from "@chakra-ui/toast";
 import { call, delay, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 import bandeirasService from "services/bandeiras";
 import cartoesService from "services/cartoes";
 import usuariosService from "services/usuarios";
-import { loadPagamento, mudarCarrinho, mudarQuantidade, mudarTotal } from "store/reducers/carrinho";
+import { finalizarPagamento, loadPagamento, mudarCarrinho, mudarQuantidade, mudarTotal, resetarCarrinho } from "store/reducers/carrinho";
 import { addUsuario } from "store/reducers/usuario";
+
+const {toast} = createStandaloneToast()
 
 const usuarioLogadoId = 1;
 
@@ -19,12 +22,12 @@ function* loadPagamentoWorked(){
         
         
         const cartoesComBandeiras = cartoes.map(cartao => {
-            const bandeiraDoCartao = bandeiras.find(bandeira => bandeira.id == cartao.bandeiraId)
+            const bandeiraDoCartao = bandeiras.find(bandeira => +bandeira.id === +cartao.bandeiraId)
             return {...cartao, taxa: bandeiraDoCartao.taxa, bandeira: bandeiraDoCartao.nome}
         
         })
         
-        console.log({ ...usuario, cartoes: cartoesComBandeiras})
+        
         yield put(addUsuario({...usuario, cartoes: cartoesComBandeiras}))
 
     } catch (error) {
@@ -44,7 +47,35 @@ function* calcularTotalWorked(){
     yield put(mudarTotal(valorTotal));
 }
 
+function* finalizarPagamentoWorked({payload}){
+    const { valorTotal, formaDePagamento } = payload;
+
+    if (valorTotal > formaDePagamento.saldo){
+        return yield toast({
+            title: "Error",
+            description: "Insufficient balance",
+            status:"error",
+            duration: 2000,
+            isClosable: true
+        });
+    } else {
+        
+        toast({
+                title: "Sucess",
+                description: "Purchase made successfully",
+                status:"success",
+                duration: 2000,
+                isClosable: true
+        });
+        yield put(resetarCarrinho())
+          
+        
+        
+    }
+}
+
 export function* carrinhoSaga (){
     yield takeLatest(loadPagamento, loadPagamentoWorked);
     yield takeEvery([mudarQuantidade, mudarCarrinho], calcularTotalWorked)
+    yield takeLatest(finalizarPagamento, finalizarPagamentoWorked);
 }

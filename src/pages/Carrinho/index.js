@@ -1,8 +1,7 @@
 import Header from "components/Header";
 import styles from "./Carrinho.module.scss";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Item from "components/Item";
-import { resetarCarrinho } from "store/reducers/carrinho";
 import Button from "components/Button";
 import { useNavigate } from "react-router-dom";
 
@@ -10,14 +9,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function Carrinho() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  
 
   const { carrinho, total } = useSelector((state) => {
     
     const regexp = new RegExp(state.busca, "i");
     const carrinhoReduce = state.carrinho.data.reduce((itens, itemNoCarrinho) => {
       const item = state.itens.find((item) => item.id === itemNoCarrinho.id);
-      if (item.titulo.match(regexp)) {
+      if (item !== undefined && item.titulo.match(regexp)) {
         itens.push({
           ...item,
           quantidade: itemNoCarrinho.quantidade,

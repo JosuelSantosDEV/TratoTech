@@ -18,15 +18,16 @@ function* observeCategories (){
     try {
 
         const categories = yield call(categoriesService.fetch);
-        yield put(addAllCategories(categories));
-
-        yield toast({
+        
+        toast({
             title: "Sucess",
             description: "Fetch datas with sucessfull",
             status:"success",
             duration: 2000,
             isClosable: true
         });
+        yield put(addAllCategories(categories));
+        
         
     } catch (error) {
         toast({

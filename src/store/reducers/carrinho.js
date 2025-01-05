@@ -3,6 +3,8 @@ import { createAction, createSlice } from "@reduxjs/toolkit";
 const initialState = {data: [], total: 0};
 
 export const loadPagamento = createAction("carrinho/loadPagamento")
+export const finalizarPagamento = createAction('carrinho/finalizarPagamento');
+
 
 const carrinhoSlice = createSlice({
   name: "carrinho",
